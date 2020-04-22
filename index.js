@@ -1,11 +1,11 @@
 /*
  * bid-lazy-path-plugin
  */
-class BidLazyPathPlugin(options) {
-     constructor(options) {
+class BidLazyPathPlugin {
+    constructor(options) {
         this.options = options;
     }
-    apply (compiler) {
+    apply(compiler) {
         var self = this;
         // for (var hook of Object.keys(compiler.hooks)) {
         //     console.log(hook);
@@ -42,6 +42,5 @@ class BidLazyPathPlugin(options) {
         // });
     }
 }
-
 
 module.exports = BidLazyPathPlugin;
