@@ -1,0 +1,24 @@
+{
+  "name": "bid-lazy-path-plugin",
+  "version": "1.0.0",
+  "description": "webpack plugin",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/purple97/bid-lazy-path-plugin.git"
+  },
+  "keywords": [
+    "webpack",
+    "plugin",
+    "bid"
+  ],
+  "author": "dezhao.chen",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/purple97/bid-lazy-path-plugin/issues"
+  },
+  "homepage": "https://github.com/purple97/bid-lazy-path-plugin#readme"
+}
