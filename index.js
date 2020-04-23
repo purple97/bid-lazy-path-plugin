@@ -2,7 +2,7 @@
  * @Author: dezhao.chen
  * @Date: 2020-04-22 21:06:04
  * @LastEditors: dezhao.chen
- * @LastEditTime: 2020-04-23 20:58:39
+ * @LastEditTime: 2020-04-23 21:02:14
  * @Description: bid-lazy-path-plugin 懒加载文件添加version
  */
 const path = require('path');
@@ -18,9 +18,7 @@ class BidLazyPathPlugin {
             for (const module of chunk.modulesIterable) {
                 // module包含多个依赖，通过module.dependencies进行遍历
                 module.dependencies.forEach((dependency) => {
-                    console.log('================================================');
-                    console.log(dependency);
-                    console.log('================================================');
+                    // console.log(dependency);
                 });
             }
         });
@@ -30,7 +28,6 @@ class BidLazyPathPlugin {
         for (const name of Object.keys(compilation.assets)) {
             // compilation.assets[name];
             // console.log(compilation.assets[name]);
-            console.log(name);
         }
     }
 
@@ -55,9 +52,6 @@ class BidLazyPathPlugin {
     apply(compiler) {
         var self = this;
         compiler.hooks.emit.tap('BidLazyPathPlugin', (compilation) => {
-            const entrypoints = compilation.entrypoints;
-            const points = entrypoints.get('src/p/react-test/0.1.14/index');
-            console.log(this.options);
             // this.printChunks(compilation);
             // this.printAssets(compilation);
             if (this.options.version) {
