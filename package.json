@@ -1,24 +1,34 @@
 {
-  "name": "bid-lazy-path-plugin",
-  "version": "1.0.0",
-  "description": "webpack plugin",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/purple97/bid-lazy-path-plugin.git"
-  },
-  "keywords": [
-    "webpack",
-    "plugin",
-    "bid"
-  ],
-  "author": "dezhao.chen",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/purple97/bid-lazy-path-plugin/issues"
-  },
-  "homepage": "https://github.com/purple97/bid-lazy-path-plugin#readme"
+    "name": "bid-lazy-path-plugin",
+    "version": "1.0.1",
+    "description": "webpack plugin",
+    "main": "lib/index.js",
+    "scripts": {
+        "delete": "rm -rf lib && rm -rf dist",
+        "build": "npm run delete && npx babel index.js --out-dir lib/index.js",
+        "tag": "npm run build && npm publish ./"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/purple97/bid-lazy-path-plugin.git"
+    },
+    "keywords": [
+        "webpack",
+        "plugin",
+        "bid"
+    ],
+    "author": "dezhao.chen",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/purple97/bid-lazy-path-plugin/issues"
+    },
+    "homepage": "https://github.com/purple97/bid-lazy-path-plugin#readme",
+    "devDependencies": {
+        "@babel/cli": "^7.4.3",
+        "@babel/core": "^7.4.3",
+        "@babel/preset-env": "^7.4.3",
+        "@babel/preset-react": "^7.0.0",
+        "@babel/plugin-proposal-class-properties": "^7.4.4",
+        "@babel/plugin-proposal-object-rest-spread": "^7.4.4"
+    }
 }

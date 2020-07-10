@@ -2,7 +2,7 @@
  * @Author: dezhao.chen
  * @Date: 2020-04-22 21:06:04
  * @LastEditors: dezhao.chen
- * @LastEditTime: 2020-04-23 21:02:14
+ * @LastEditTime: 2020-04-24 19:55:51
  * @Description: bid-lazy-path-plugin 懒加载文件添加version
  */
 const path = require('path');
