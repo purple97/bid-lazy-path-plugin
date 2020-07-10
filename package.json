@@ -1,11 +1,11 @@
 {
     "name": "bid-lazy-path-plugin",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "webpack plugin",
     "main": "lib/index.js",
     "scripts": {
         "delete": "rm -rf lib && rm -rf dist",
-        "build": "npm run delete && npx babel index.js --out-dir lib/index.js",
+        "build": "npm run delete && npx babel ./index.js --out-dir lib",
         "tag": "npm run build && npm publish ./"
     },
     "repository": {
@@ -27,7 +27,6 @@
         "@babel/cli": "^7.4.3",
         "@babel/core": "^7.4.3",
         "@babel/preset-env": "^7.4.3",
-        "@babel/preset-react": "^7.0.0",
         "@babel/plugin-proposal-class-properties": "^7.4.4",
         "@babel/plugin-proposal-object-rest-spread": "^7.4.4"
     }
