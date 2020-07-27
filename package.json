@@ -1,9 +1,10 @@
 {
     "name": "bid-lazy-path-plugin",
-    "version": "1.0.2",
+    "version": "1.0.4",
     "description": "webpack plugin",
     "main": "lib/index.js",
     "scripts": {
+        "watch": "npx babel ./index.js --out-file ./lib/index.js --watch",
         "delete": "rm -rf lib && rm -rf dist",
         "build": "npm run delete && npx babel ./index.js --out-dir lib",
         "tag": "npm run build && npm publish ./"
