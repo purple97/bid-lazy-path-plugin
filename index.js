@@ -2,7 +2,7 @@
  * @Author: dezhao.chen
  * @Date: 2020-04-22 21:06:04
  * @LastEditors: dezhao.chen
- * @LastEditTime: 2020-07-27 19:40:15
+ * @LastEditTime: 2020-07-28 10:30:55
  * @Description: bid-lazy-path-plugin 懒加载文件输出路径添加version
  */
 import path from 'path';
@@ -26,21 +26,15 @@ class BidLazyPathPlugin {
         /*  */
         // compiler.hooks.compile.tap(pluginName, (compilation) => {});
         /*  */
-        // compiler.hooks.compilation.tap('RuntimePlugin', (compilation) => {
-        //     // console.log(compilation.hooks);
-        //     compilation.hooks.succeedModule.tap('RuntimePlugin', (chunks) => {
-        //         if (chunks.resource.match(/home\.jsx$/)) {
-        //             // console.log(chunks);
-        //         }
-        //         return true;
-        //     });
-
-        //     // compilation.hooks.runtimeRequirementInTree.tap('RuntimePlugin', (chunk, set) => {
-        //     //     // compilation.addRuntimeModule(chunk, new LoadScriptRuntimeModule());
-        //     //     console.log(chunk);
-        //     //     return true;
-        //     // });
-        // });
+        compiler.hooks.compilation.tap('RuntimePlugin', (compilation) => {
+            // console.log(compilation.hooks);
+            // compilation.hooks.succeedModule.tap('RuntimePlugin', (chunks) => {
+            //     if (chunks.resource.match(/home\.jsx$/)) {
+            //         // console.log(chunks);
+            //     }
+            //     return true;
+            // });
+        });
         /*  */
         compiler.hooks.emit.tap(pluginName, (compilation) => {
             // this.printChunks(compilation);
@@ -85,6 +79,7 @@ class BidLazyPathPlugin {
             if (/\.(js|jsx|ts|tsx)$/.test(name)) {
                 if (name.indexOf(version) != -1) {
                     mainDir = path.dirname(path.dirname(name));
+                    console.log(name);
                     newAssets[name] = this.filterHostPaht(newAssets[name], mainDir);
                 }
                 // console.log(name);
@@ -123,14 +118,15 @@ class BidLazyPathPlugin {
         const outputDir = this.options.outputDir;
         const jsHost = this.options.jsHost;
         const version = this.options.version;
-        const resouString = 'a.src=function(e){return l.p+""+e+".js"}(e);';
+        // const resouString = 'a.src=function(e){return l.p+""+e+".js"}(e);';
+        const resouString =
+            'document.createElement("script");a.charset="utf-8",a.timeout=120,o.nc&&a.setAttribute("nonce",o.nc),a.src=function(e){return o.p+""+e+".js"}(e);';
+        const rx = new RegExp(/charset="utf-8"[\w\.\d\s="\-,;&\(\)\{\}\+]*\);/);
         const newCode = this.options.isLocal
-            ? `var _p=window.location.pathname.split('/');_p.length=_p.length-1;return _p.join('/')+"/${version}/"+e+".js"`
-            : `return l.p+"${version}/"+e+".js"`;
+            ? `{var _p=window.location.pathname.split('/');_p.length=_p.length-1;return _p.join('/')+"/${version}/"+e+".js"}`
+            : `{return l.p+"${version}/"+e+".js"}`;
         const newString = `a.src=function(e){${newCode}}(e);`;
-        RawSource._value = RawSource._value.replace(resouString, function (str) {
-            return newString;
-        });
+        RawSource._value = RawSource._value.replace(rx, (str) => str.replace(/\{[\s\w\d\+"'.]*\}/, (code) => newCode));
         return RawSource;
     }
 }
