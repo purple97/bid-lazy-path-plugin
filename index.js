@@ -2,7 +2,7 @@
  * @Author: dezhao.chen
  * @Date: 2020-04-22 21:06:04
  * @LastEditors: dezhao.chen
- * @LastEditTime: 2020-08-11 20:54:13
+ * @LastEditTime: 2020-08-12 11:21:01
  * @Description: bid-lazy-path-plugin 懒加载文件输出路径添加version
  */
 import path from 'path';
@@ -10,7 +10,7 @@ const pluginName = 'BidLazyPathPlugin';
 class BidLazyPathPlugin {
     constructor(options) {
         this.options = options;
-        this.options.isLocal = process.env.NODE_ENV == 'dev' || process.env.NODE_ENV == 'local' || process.env.NODE_ENV == 'daily';
+        this.options.isLocal = this.options.env == 'dev' || this.options.env == 'local' || this.options.env == 'daily';
     }
 
     apply(compiler) {
