@@ -2,7 +2,7 @@
  * @Author: dezhao.chen
  * @Date: 2020-04-22 21:06:04
  * @LastEditors: dezhao.chen
- * @LastEditTime: 2020-08-12 11:21:01
+ * @LastEditTime: 2020-08-13 10:56:31
  * @Description: bid-lazy-path-plugin 懒加载文件输出路径添加version
  */
 import path from 'path';
@@ -114,22 +114,21 @@ class BidLazyPathPlugin {
      * 这段代码只有 webpack.config.output.chunkFilename = '[id].js', 才行;
      */
     filterHostPaht(RawSource, mainDir) {
-        const outputDir = this.options.outputDir;
-        const jsHost = this.options.jsHost;
-        const version = this.options.version;
+        const { outputDir, jsHost, version, isLocal } = this.options;
         const dir = mainDir.replace('javascripts/build/', '');
         // const resouString = 'a.src=function(e){return l.p+""+e+".js"}(e);';
         // console.log('--bid-lazy-path-plugin--', mainDir);
         const resouString =
             'document.createElement("script");a.charset="utf-8",a.timeout=120,o.nc&&a.setAttribute("nonce",o.nc),a.src=function(e){return o.p+""+e+".js"}(e);';
         const rx = new RegExp(/charset="utf-8"[\w\.\d\s="\-,;&\(\)\{\}\+]*\);/);
-        const newCode = this.options.isLocal
-            ? `{var _p=window.location.pathname.split('/');_p.length=_p.length-1;return _p.join('/')+"/${version}/"+e+".js"}`
-            : `{return l.p+"${dir}/${version}/"+e+".js"}`;
-        const newString = `a.src=function(e){${newCode}}(e);`;
-        RawSource._value = RawSource._value.replace(rx, (str) =>
-            str.replace(/\{[\s\w\d\+"'.]*\}/, (code) => newCode.replace(/"\.js"/, code.match(/"\.[\w\d\s._\-]*\.js"/)[0]))
-        );
+        // const newString = `a.src=function(e){${newCode}}(e);`;
+        RawSource._value = RawSource._value.replace(rx, (str) => {
+            const objName = str.match(/\,\w\.nc\)\,/)[0].slice(1, 2);
+            const newCode = isLocal
+                ? `{var _p=window.location.pathname.split('/');_p.length=_p.length-1;return _p.join('/')+"/${version}/"+e+".js"}`
+                : `{return ${objName}.p+"${dir}/${version}/"+e+".js"}`;
+            return str.replace(/\{[\s\w\d\+"'.]*\}/, (code) => newCode.replace(/"\.js"/, code.match(/"\.[\w\d\s._\-]*\.js"/)[0]));
+        });
         return RawSource;
     }
 }
