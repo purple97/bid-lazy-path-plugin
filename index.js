@@ -2,8 +2,9 @@
  * @Author: dezhao.chen
  * @Date: 2020-04-22 21:06:04
  * @LastEditors: dezhao.chen
- * @LastEditTime: 2020-08-13 10:56:31
+ * @LastEditTime: 2020-08-19 15:56:24
  * @Description: bid-lazy-path-plugin 懒加载文件输出路径添加version
+ * 构建出来的js文件路径都在这处理
  */
 import path from 'path';
 const pluginName = 'BidLazyPathPlugin';
@@ -77,11 +78,13 @@ class BidLazyPathPlugin {
         let mainDir = '';
         // console.log(this.options.isLocal, this.options.jsHost, this.options.outputDir);
         for (const name of Object.keys(newAssets)) {
+            if (name.indexOf(version) != -1) {
+                mainDir = path.dirname(path.dirname(name));
+                newAssets[name] = this.filterHostPaht(newAssets[name], mainDir);
+            }
+        }
+        for (const name of Object.keys(newAssets)) {
             if (/\.(js|jsx|ts|tsx)$/.test(name)) {
-                if (name.indexOf(version) != -1) {
-                    mainDir = path.dirname(path.dirname(name));
-                    newAssets[name] = this.filterHostPaht(newAssets[name], mainDir);
-                }
                 if (name.indexOf(version) == -1) {
                     let dirpath = mainDir ? mainDir + '/' : '';
                     const newName = this.createNewPath(dirpath + name, version);
@@ -117,7 +120,7 @@ class BidLazyPathPlugin {
         const { outputDir, jsHost, version, isLocal } = this.options;
         const dir = mainDir.replace('javascripts/build/', '');
         // const resouString = 'a.src=function(e){return l.p+""+e+".js"}(e);';
-        // console.log('--bid-lazy-path-plugin--', mainDir);
+        console.log('--bid-lazy-path-plugin--', mainDir, outputDir);
         const resouString =
             'document.createElement("script");a.charset="utf-8",a.timeout=120,o.nc&&a.setAttribute("nonce",o.nc),a.src=function(e){return o.p+""+e+".js"}(e);';
         const rx = new RegExp(/charset="utf-8"[\w\.\d\s="\-,;&\(\)\{\}\+]*\);/);
