@@ -28,10 +28,10 @@ class BidLazyPathPlugin {
         /*  */
         // compiler.hooks.compile.tap(pluginName, (compilation) => {});
         /*  */
-        // compiler.hooks.compilation.tap(pluginName, (compilation) => {
+        // compiler.hooks.entryOption.tap(pluginName, (compilation) => {
         //     const { chunkGroups } = compilation;
-        //     console.log('== compilation ==');
-        //     console.log(compilation.assets);
+        //     console.log('== entryOption ==');
+        //     console.log(compiler);
         // });
 
         /*  */
@@ -73,14 +73,10 @@ class BidLazyPathPlugin {
         let newAssets = compilation.assets;
         let newAssetsInfo = compilation.assetsInfo;
         const { chunkGroups } = compilation;
+        const lazyFileMap = this.createFileMap(chunkGroups, version);
         // console.log(Object.keys(compilation));
         // console.log(chunkGroups[3].origins);
-        // console.log(chunkGroups[3].chunks);
-        // console.log(this.options.isLocal, this.options.jsHost, this.options.outputDir);
-        // for (const name of Object.keys(newAssets)) {
-        //     console.log(name, mainDir);
-        // }
-        // console.log(newAssets);
+        // console.log(lazyFileMap);
         let mainDir = '';
         for (const name of Object.keys(newAssets)) {
             if (name.indexOf(version) != -1) {
@@ -88,11 +84,11 @@ class BidLazyPathPlugin {
                 newAssets[name] = this.filterHostPaht(newAssets[name], mainDir);
             }
             if (/\.(js|jsx|ts|tsx)$/.test(name)) {
-                // console.log('------', name, mainDir);
-                if (name.indexOf(version) == -1) {
-                    let dirpath = mainDir ? mainDir + '/' : '';
-                    const newName = this.createNewPath(dirpath + name, version);
-                    // console.log('newName:', newName);
+                // console.log(name);
+                if (name.indexOf(version) == -1 && lazyFileMap[name]) {
+                    // let dirpath = mainDir ? mainDir + '/' : '';
+                    // const newName = this.createNewPath(dirpath + name, version);
+                    const newName = lazyFileMap[name];
                     newAssets[newName] = newAssets[name];
                     delete newAssets[name];
                     this.setAssetsInfoByDependency(newAssetsInfo, name, newName);
@@ -102,6 +98,32 @@ class BidLazyPathPlugin {
         compilation.assets = newAssets;
         compilation.assetsInfo = newAssetsInfo;
         return compilation;
+    }
+    /*
+     * 创建懒加载文件map
+     * 收集所有主入口文件地址，匹配懒加载文件路径中是否包含主入口路径；
+     * 符合以上要求的懒加载文件，修改路径为完成路径
+     */
+    createFileMap(chunkGroups, version) {
+        const lazyFileMap = {}; // 懒加载文件列表映射
+        const mainDirArray = []; // 入口文件目录数组
+        chunkGroups.forEach(({ chunks }) => {
+            const { id, name } = chunks[0];
+            if (name.indexOf(version) > -1) mainDirArray.push(path.dirname(path.dirname(name)));
+        });
+        chunkGroups.forEach(({ chunks }) => {
+            const { id, name, files } = chunks[0];
+            // console.log(id, name, files);
+            let mainDirName = '';
+            if (name.indexOf(version) == -1) {
+                mainDirArray.forEach((dir) => {
+                    if (name.indexOf(dir) > -1) mainDirName = dir;
+                });
+                const filepath = mainDirName + `/${version}/` + files[0];
+                lazyFileMap[files[0]] = this.options.isLocal ? filepath : 'javascripts/build/' + filepath;
+            }
+        });
+        return lazyFileMap;
     }
 
     createNewPath(filepath, version) {
