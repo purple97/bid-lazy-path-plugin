@@ -28,15 +28,12 @@ class BidLazyPathPlugin {
         /*  */
         // compiler.hooks.compile.tap(pluginName, (compilation) => {});
         /*  */
-        // compiler.hooks.compilation.tap('RuntimePlugin', (compilation) => {
-        //     // console.log(compilation.hooks);
-        //     // compilation.hooks.succeedModule.tap('RuntimePlugin', (chunks) => {
-        //     //     if (chunks.resource.match(/home\.jsx$/)) {
-        //     //         // console.log(chunks);
-        //     //     }
-        //     //     return true;
-        //     // });
+        // compiler.hooks.compilation.tap(pluginName, (compilation) => {
+        //     const { chunkGroups } = compilation;
+        //     console.log('== compilation ==');
+        //     console.log(compilation.assets);
         // });
+
         /*  */
         compiler.hooks.emit.tap(pluginName, (compilation) => {
             // this.printChunks(compilation);
@@ -58,7 +55,7 @@ class BidLazyPathPlugin {
             for (const module of chunk.modulesIterable) {
                 // module包含多个依赖，通过module.dependencies进行遍历
                 module.dependencies.forEach((dependency) => {
-                    // console.log(dependency);
+                    console.log(dependency);
                 });
             }
         });
@@ -75,19 +72,27 @@ class BidLazyPathPlugin {
     recursionReplacePath(compilation, version) {
         let newAssets = compilation.assets;
         let newAssetsInfo = compilation.assetsInfo;
-        let mainDir = '';
+        const { chunkGroups } = compilation;
+        // console.log(Object.keys(compilation));
+        // console.log(chunkGroups[3].origins);
+        // console.log(chunkGroups[3].chunks);
         // console.log(this.options.isLocal, this.options.jsHost, this.options.outputDir);
+        // for (const name of Object.keys(newAssets)) {
+        //     console.log(name, mainDir);
+        // }
+        // console.log(newAssets);
+        let mainDir = '';
         for (const name of Object.keys(newAssets)) {
             if (name.indexOf(version) != -1) {
                 mainDir = path.dirname(path.dirname(name));
                 newAssets[name] = this.filterHostPaht(newAssets[name], mainDir);
             }
-        }
-        for (const name of Object.keys(newAssets)) {
             if (/\.(js|jsx|ts|tsx)$/.test(name)) {
+                // console.log('------', name, mainDir);
                 if (name.indexOf(version) == -1) {
                     let dirpath = mainDir ? mainDir + '/' : '';
                     const newName = this.createNewPath(dirpath + name, version);
+                    // console.log('newName:', newName);
                     newAssets[newName] = newAssets[name];
                     delete newAssets[name];
                     this.setAssetsInfoByDependency(newAssetsInfo, name, newName);
@@ -120,7 +125,7 @@ class BidLazyPathPlugin {
         const { outputDir, jsHost, version, isLocal } = this.options;
         const dir = mainDir.replace('javascripts/build/', '');
         // const resouString = 'a.src=function(e){return l.p+""+e+".js"}(e);';
-        console.log('--bid-lazy-path-plugin--', mainDir, outputDir);
+        // console.log('--bid-lazy-path-plugin--', mainDir, outputDir);
         const resouString =
             'document.createElement("script");a.charset="utf-8",a.timeout=120,o.nc&&a.setAttribute("nonce",o.nc),a.src=function(e){return o.p+""+e+".js"}(e);';
         const rx = new RegExp(/charset="utf-8"[\w\.\d\s="\-,;&\(\)\{\}\+]*\);/);
