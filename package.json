@@ -1,6 +1,6 @@
 {
     "name": "bid-lazy-path-plugin",
-    "version": "1.0.11",
+    "version": "1.0.12",
     "description": "webpack plugin",
     "main": "lib/index.js",
     "scripts": {
