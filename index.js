@@ -110,7 +110,6 @@ class BidLazyPathPlugin {
         chunkGroups.forEach(({ chunks }) => {
             const { id, name } = chunks[0];
             if (name.indexOf(version) > -1) mainDirArray.push(path.dirname(path.dirname(name)));
-            console.log(name);
         });
         chunkGroups.forEach(({ chunks }) => {
             const { id, name, files, _groups } = chunks[0];
@@ -169,7 +168,6 @@ class BidLazyPathPlugin {
             const newCode = isLocal
                 ? `{var _p=window.location.pathname.split('/');_p.length=_p.length-1;return _p.join('/')+"/${version}/"+e+".js"}`
                 : `{return ${objName}.p+"${dir}/${version}/"+e+".js"}`;
-            console.log(mainDir);
             return str.replace(/\{[\s\w\d\+"'.]*\}/, (code) => newCode.replace(/"\.js"/, code.match(/"\.[\w\d\s._\-]*\.js"/)[0]));
         });
         return RawSource;
