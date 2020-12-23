@@ -115,10 +115,12 @@ class BidLazyPathPlugin {
             const { id, name, files } = chunks[0];
             // console.log(id, name, files);
             let mainDirName = '';
+            console.log(name, version, mainDirArray);
             if (name.indexOf(version) == -1) {
                 mainDirArray.forEach((dir) => {
                     if (name.indexOf(dir) > -1) mainDirName = dir;
                 });
+
                 const filepath = mainDirName + `/${version}/` + files[0];
                 lazyFileMap[files[0]] = this.options.isLocal ? filepath : 'javascripts/build/' + filepath;
             }
